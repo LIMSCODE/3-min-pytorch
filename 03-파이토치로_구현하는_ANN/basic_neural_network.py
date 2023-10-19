@@ -86,7 +86,7 @@ model = NeuralNet(2, 5)
 learning_rate = 0.03
 criterion = torch.nn.BCELoss()  //오차함수 : 이진교차엔트로피
 epochs = 2000                   //학습데이터를 몇번 입력할지 (충분히학습)
-optimizer = torch.optim.SGD(model.parameters(), lr = learning_rate)  //최적화알고리즘 - 확률적경사하강법(SGD) 선택
+optimizer = torch.optim.SGD(model.parameters(), lr = learning_rate)  //최적화알고리즘 - 확률적경사하강법(SGD) 선택 ###
                                                                      //새가중치 = 가중치-학습률x가중치에대한기울기
                                                                      //optimizer는 step()함수를 부를때마다 가중치를 학습률만큼 갱신
 
@@ -109,7 +109,9 @@ for epoch in range(epochs):
         print('Train loss at {} is {}'.format(epoch, train_loss.item()))
     train_loss.backward()                                            //역전파 (오차함수를 가중치로 미분하여 오차최소화방향을 구하고,
     optimizer.step()                                                 //그 방향으로 모델을 학습률만큼 이동시킴)
-
+                                                                     //즉, 역전파알고리즘으로 확률적경사하강법(SGD)를 사용하여 
+                                                                     //오차최소화방향으로 가중치를 학습률만큼 갱신한다. ###
+ 
 
 model.eval()
 test_loss = criterion(torch.squeeze(model(x_test)), y_test)
