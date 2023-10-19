@@ -60,14 +60,14 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.fc1 = nn.Linear(784, 256)  //nn.Linear은 선형결합을 수행하는 객체를 만듬. fc1은 픽셀값 784개를 입력받아 가중치를 행렬곱하고 편향을 더해 256개출력
         self.fc2 = nn.Linear(256, 128)
-        self.fc3 = nn.Linear(128, 10)   //출력값 10개 각각은 클래스를 나타내며, 10개중 값이 가장 큰 클래스가 이 모델의 예측값이 됨.
+        self.fc3 = nn.Linear(128, 10)   //출력값 10개 각각은 클래스를 나타내며, 10개중 값이 가장 큰 클래스가 이 모델의 예측값이 됨. ###
 
     def forward(self, x):
         x = x.view(-1, 784)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
-        return x
+        return x                        //모델의 반환값(output)은 10개의 클래스이다. ###
 
 
 # ## 모델 준비하기
@@ -75,7 +75,9 @@ class Net(nn.Module):
 # 일반적으로 CPU 1개만 사용할 경우 필요는 없지만,
 # GPU를 사용하고자 하는 경우 `to("cuda")`로 지정하여 GPU로 보내야 합니다.
 # 지정하지 않을 경우 계속 CPU에 남아 있게 되며 빠른 훈련의 이점을 누리실 수 없습니다.
+//#모델을 위의 구현한 인공신경망으로 지정함
 model        = Net().to(DEVICE)               //모델의 파라미터를 지정한 장치메모리로 보냄
+
 
 # 최적화 알고리즘으로 파이토치에 내장되어 있는 `optim.SGD`를 사용하겠습니다.
 optimizer    = optim.SGD(model.parameters(), lr=0.01)
@@ -105,7 +107,7 @@ def evaluate(model, test_loader):
                                          reduction='sum').item()
             # 가장 큰 값을 가진 클래스가 모델의 예측입니다.
             # 예측과 정답을 비교하여 일치할 경우 correct에 1을 더합니다.
-            pred = output.max(1, keepdim=True)[1]        //가장큰값을 가진클래스가 모델의 예측임
+            pred = output.max(1, keepdim=True)[1]        //모델의반환값(output)중 가장큰값을 가진클래스가 모델의 예측임 ###
             correct += pred.eq(target.view_as(pred)).sum().item()
 
     test_loss /= len(test_loader.dataset)
