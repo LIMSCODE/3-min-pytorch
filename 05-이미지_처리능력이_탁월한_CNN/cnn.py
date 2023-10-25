@@ -22,9 +22,7 @@ DEVICE = torch.device("cuda" if USE_CUDA else "cpu")
 EPOCHS     = 40
 BATCH_SIZE = 64
 
-
 # ## 데이터셋 불러오기
-
 train_loader = torch.utils.data.DataLoader(
     datasets.MNIST('./.data',
                    train=True,
@@ -45,20 +43,19 @@ test_loader = torch.utils.data.DataLoader(
 
 
 # ## 뉴럴넷으로 Fashion MNIST 학습하기
-
-class Net(nn.Module):
+class Net(nn.Module):  
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
-        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
-        self.conv2_drop = nn.Dropout2d()
-        self.fc1 = nn.Linear(320, 50)
+        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)  //nn.Conv2d 모듈은 입력 x를받는 함수를 반환
+        self.conv2 = nn.Conv2d(10, 20, kernel_size=5) //두번째 컨볼루션계층 : 10개의 특징맵을 받아 20개의특징맵을 만듬
+        self.conv2_drop = nn.Dropout2d()              //출력값에 드롭아웃 적용
+        self.fc1 = nn.Linear(320, 50)                 //일반신경망을 거침 (입력크기 320, 출력크기50)
         self.fc2 = nn.Linear(50, 10)
 
     def forward(self, x):
-        x = F.relu(F.max_pool2d(self.conv1(x), 2))
+        x = F.relu(F.max_pool2d(self.conv1(x), 2))   //컨볼루션계층을 거친후, 맥스풀링을 통과 2는 커널의크기 
         x = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2))
-        x = x.view(-1, 320)
+        x = x.view(-1, 320)                          //x는 컨볼루션게층 2개를거친 특징맵이다. 2차원이므로 1차원으로 펴줌(차원축소) : -1은 남는차원모두를 뜻함, 320은 x가가진 원소의갯수
         x = F.relu(self.fc1(x))
         x = F.dropout(x, training=self.training)
         x = self.fc2(x)
