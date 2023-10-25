@@ -70,8 +70,7 @@ model     = Net().to(DEVICE)
 optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.5)
 
 
-# ## 학습하기
-
+# ## 학습함수
 def train(model, train_loader, optimizer, epoch):
     model.train()
     for batch_idx, (data, target) in enumerate(train_loader):
@@ -88,8 +87,7 @@ def train(model, train_loader, optimizer, epoch):
                 100. * batch_idx / len(train_loader), loss.item()))
 
 
-# ## 테스트하기
-
+# ## 테스트함수
 def evaluate(model, test_loader):
     model.eval()
     test_loss = 0
@@ -107,17 +105,16 @@ def evaluate(model, test_loader):
             pred = output.max(1, keepdim=True)[1]
             correct += pred.eq(target.view_as(pred)).sum().item()
 
-    test_loss /= len(test_loader.dataset)
+    test_loss /= len(test_loader.dataset)            
     test_accuracy = 100. * correct / len(test_loader.dataset)
     return test_loss, test_accuracy
 
 
 # ## 코드 돌려보기
 # 자, 이제 모든 준비가 끝났습니다. 코드를 돌려서 실제로 학습이 되는지 확인해봅시다!
-
-for epoch in range(1, EPOCHS + 1):
-    train(model, train_loader, optimizer, epoch)
-    test_loss, test_accuracy = evaluate(model, test_loader)
+for epoch in range(1, EPOCHS + 1):                           //학습횟수 증가시키면서
+    train(model, train_loader, optimizer, epoch)             //학습
+    test_loss, test_accuracy = evaluate(model, test_loader)  //평가후 Acuracy증가함 확인
     
     print('[{}] Test Loss: {:.4f}, Accuracy: {:.2f}%'.format(
           epoch, test_loss, test_accuracy))
