@@ -78,9 +78,9 @@ def train(model, train_loader, optimizer, epoch):
         data, target = data.to(DEVICE), target.to(DEVICE)
         optimizer.zero_grad()
         output = model(data)
-        loss = F.cross_entropy(output, target)
-        loss.backward()
-        optimizer.step()
+        loss = F.cross_entropy(output, target)  //모델의 출력값 output을 정답값인 target 값과 비교
+        loss.backward()        //역전파알고리즘 : 기울기계산
+        optimizer.step()       //최적화함수 : 구한 기울기값으로 모델의 학습파라미터를 갱신
 
         if batch_idx % 200 == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
