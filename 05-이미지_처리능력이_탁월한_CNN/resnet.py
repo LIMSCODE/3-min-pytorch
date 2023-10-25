@@ -89,9 +89,9 @@ class ResNet(nn.Module):                    //모델 정의 : 이미지를받아
             self.in_planes = planes                                      //self.make_layer()는 nn.Sequential도구로, 여러 BasicBlock을 모듈하나로 묶어줌.
         return nn.Sequential(*layers)
 
-    def forward(self, x):
-        out = F.relu(self.bn1(self.conv1(x)))
-        out = self.layer1(out)
+    def forward(self, x):                        //입력이 들어오면 일반적인 방식대로 컨볼루션, 배치정규화, 활성화함수를 통과하고 / 
+        out = F.relu(self.bn1(self.conv1(x)))    //사전에 정의해둔 BasicBlock층을 가진 layer1,2,3을 통과함 ( 각 레이어는 2개의 Residual블록을 가짐)
+        out = self.layer1(out)                   //그후 평균풀링을 거치고 마지막 신경망을 거쳐 분류결과를 출력한다.
         out = self.layer2(out)
         out = self.layer3(out)
         out = F.avg_pool2d(out, 8)
