@@ -12,13 +12,11 @@
 # **RNN 을 이용해 IMDB 데이터를 가지고 텍스트 감정분석을 해 봅시다.**
 # 이번 책에서 처음으로 접하는 텍스트 형태의 데이터셋인 IMDB 데이터셋은 50,000건의 영화 리뷰로 이루어져 있습니다.
 # 각 리뷰는 다수의 영어 문장들로 이루어져 있으며, 평점이 7점 이상의 긍정적인 영화 리뷰는 2로, 평점이 4점 이하인 부정적인 영화 리뷰는 1로 레이블링 되어 있습니다. 영화 리뷰 텍스트를 RNN 에 입력시켜 영화평의 전체 내용을 압축하고, 이렇게 압축된 리뷰가 긍정적인지 부정적인지 판단해주는 간단한 분류 모델을 만드는 것이 이번 프로젝트의 목표입니다.
-
 import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchtext import data, datasets
-
 
 # 하이퍼파라미터
 BATCH_SIZE = 64
@@ -28,7 +26,6 @@ USE_CUDA = torch.cuda.is_available()
 DEVICE = torch.device("cuda" if USE_CUDA else "cpu")
 print("다음 기기로 학습합니다:", DEVICE)
 
-
 # 데이터 로딩하기
 print("데이터 로딩중...")
 TEXT = data.Field(sequential=True, batch_first=True, lower=True)    //텍스트형태의 영화리뷰와 그에 해당하는 레이블을 텐서로 바꿔줌
@@ -37,19 +34,16 @@ trainset, testset = datasets.IMDB.splits(TEXT, LABEL)               //splits함�
 TEXT.build_vocab(trainset, min_freq=5)                              //워드임베딩에 필요한 단어사전을 만듬
 LABEL.build_vocab(trainset)
 
-
 # 학습용 데이터를 학습셋 80% 검증셋 20% 로 나누기
 trainset, valset = trainset.split(split_ratio=0.8)                //IMDB데이터셋에서는 검증셋이 존재하지않으므로 학습셋을 쪼개어 사용
 train_iter, val_iter, test_iter = data.BucketIterator.splits(        //배치단위로 쪼개어 학습해야함
         (trainset, valset, testset), batch_size=BATCH_SIZE,        //trainset, valset, testset에서 반복시 배치생성하는 iterator 만듬
         shuffle=True, repeat=False)
 
-
 vocab_size = len(TEXT.vocab)                                        //사전속 단어갯수, 레이블수를 정해주는 변수를 만듬
 n_classes = 2
 print("[학습셋]: %d [검증셋]: %d [테스트셋]: %d [단어수]: %d [클래스] %d"
       % (len(trainset),len(valset), len(testset), vocab_size, n_classes))
-
 
 //RNN을 포함하는 신경망모델 
 class BasicGRU(nn.Module):        //nn.Module 상속받음
@@ -78,8 +72,7 @@ class BasicGRU(nn.Module):        //nn.Module 상속받음
         weight = next(self.parameters()).data          // nn.GRU모듈의 첫번째 가중치텐서를 추출
         return weight.new(self.n_layers, batch_size, self.hidden_dim).zero_()        //이 텐서는 모델의 가중치텐서와 같은 데이터타입임.
                                                                                     //new - 모델의 가중치와 같은모양으로 변환, zero-0으로 초기화
-
-
+            
 def train(model, optimizer, train_iter):
     model.train()
     for b, batch in enumerate(train_iter):
